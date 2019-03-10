@@ -10,6 +10,9 @@ Game::Game()
     }else{
         std::cout<< "SDL Fehler :" << SDL_GetError()<<std::endl;
     }
+    mDestRect.w = 100;
+    mDestRect.h = 100;
+
 }
 
 Game::~Game()
@@ -27,37 +30,76 @@ void Game::clearAll_SDL()
 void Game::handleEvents()
 {
     SDL_Event myEvent;
+
     while(SDL_PollEvent(&myEvent)){
-        if(myEvent.type == SDL_KEYDOWN){
-            if(myEvent.key.keysym.scancode == SDL_SCANCODE_ESCAPE ){
+
+        if(myEvent.type ==  SDL_QUIT ){
+            gameIsRunning=false;
+            break;
+        }
+
+        if(myEvent.type == SDL_KEYDOWN ){
+            std::cout << myEvent.key.keysym.sym<<std::endl;
+            if(myEvent.key.keysym.sym == SDLK_ESCAPE){
                 gameIsRunning=false;
+                break;
             }
+            if(myEvent.key.state == SDLK_w){
+               mDestRect.y += -speedH;
+            }
+            if(myEvent.key.keysym.sym == SDLK_s){
+               mDestRect.y += speedH;
+            }
+            if(myEvent.key.keysym.sym == SDLK_a){
+               mDestRect.x += -speedV;
+            }
+            if(myEvent.key.keysym.sym == SDLK_d){
+               mDestRect.x += speedV;
+            }
+
+        }
+
+        if(myEvent.type ==  SDL_KEYUP ){
+
+            if(myEvent.key.keysym.sym == SDLK_w){
+               mDestRect.y += 0;
+            }
+            if(myEvent.key.keysym.sym == SDLK_s){
+               mDestRect.y += 0;
+            }
+            if(myEvent.key.keysym.sym == SDLK_a){
+               mDestRect.x += 0;
+            }
+
+            if(myEvent.key.keysym.sym == SDLK_a){
+               mDestRect.x += 0;
+            }
+            if(myEvent.key.keysym.sym == SDLK_d){
+               mDestRect.x += 0;
+            }
+
         }
     }
 }
 
 void Game::update()
-{    count++;
-    std::cout<< "Counter : " << count << std::endl;
-    mDestRect.w = 100;
-    mDestRect.h = 100;
-    mDestRect.x=count;
-    mDestRect.y=20;
+{
+
+
 
 }
 
 void Game::render()
 {
-
-
     mPlayerTex = Texturemanager::loadTexture("assets/shuttle.png",mRenderer);
-
     SDL_RenderClear(mRenderer);
     SDL_RenderCopy(mRenderer,mPlayerTex,NULL,&mDestRect);
     SDL_RenderPresent(mRenderer);
 
 
 }
+
+
 
 void Game::createTheDisplay(const char *title, int xPos, int yPos, int width, int height, bool fullscreen)
 {
@@ -84,7 +126,7 @@ void Game::createTheDisplay(const char *title, int xPos, int yPos, int width, in
 
 void Game::run()
 {
-    const int FPS = 60;
+    const int FPS = 100;
     const int frameDelay = 1000/FPS;
     Uint32 frameStart;
     int frameTime=0;
@@ -92,7 +134,7 @@ void Game::run()
     while (gameIsRunning){
        frameStart = SDL_GetTicks();
        handleEvents();
-       update();
+       //update();
        render();
        frameTime = SDL_GetTicks()-frameStart;
        if(frameDelay > frameTime){

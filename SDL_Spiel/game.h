@@ -19,6 +19,8 @@ private:
     void update();
     void render();
     int count = 0;
+    float speedH=5.0;
+    float speedV=5.0;
     SDL_Window *mWindow;
     SDL_Texture *mPlayerTex;
     SDL_Renderer *mRenderer;
